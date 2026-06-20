@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anime Universe</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; margin: 0; }
+    header { background: #1a1a1a; padding: 20px; text-align: center; }
+    nav a { color: #ff4081; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    .grid { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; }
+    .card { background: #1f1f1f; margin: 15px; padding: 15px; border-radius: 10px; width: 250px; text-align: center; }
+    .card img { width: 100%; border-radius: 8px; }
+    .card h3 { margin: 10px 0; color: #ff4081; }
+    .card p { font-size: 14px; color: #cccccc; }
+    .card a { display: inline-block; margin-top: 10px; color: #00e5ff; text-decoration: none; }
+    footer { background: #1a1a1a; text-align: center; padding: 15px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Anime Universe</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Library</a>
+      <a href="#">News</a>
+      <a href="#">Contact</a>
+      <a href="#"><a search bar></search></a>
+    </nav>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <img src="naruto.jpg" alt="Naruto Poster">
+      <h3>Naruto (2002)</h3>
+      <p>A young ninja dreams of becoming Hokage.</p>
+      <iframe width="100%" height="180"
+      src="https://www.youtube.com/embed/MGRm4Izk1SQ"
+      title="Naruto"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+      <a href="https://www.crunchyroll.com/naruto" target="_blank">Watch Officially</a>
+    </div>
+
+    <div class="card">
+      <img src="demonslayer.jpg" alt="Demon Slayer Poster">
+      <h3>Demon Slayer (2019)</h3>
+      <p>Tanjiro fights demons to save his sister.</p>
+        <iframe width="100%" height="180" 
+         src="https://www.youtube.com/embed/MGRm4IzK1SQ" 
+         title="DemonsLayer"
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+      <a href="https://www.crunchyroll.com/demon-slayer" target="_blank">Watch Officially</a>
+    </div>
+
+    <div class="card">
+      <img src="aot.jpg" alt="Classroom of Elite  Poster">
+      <h3>Classroom of Elite (2013)</h3>
+      <p>Humanity battles Titans for survival.</p>
+        <iframe width="100%" height="180" src="https://www.youtube.com/embed/MGRm4IzK1SQ" title="Attack on Titan Trailer"
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+      <a href="https://www.animeheaven.com/Classroom of Elite" target="_blank">Watch Officially</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Anime Universe | Built for fans, linking to official sources</p>
+  </footer>
+</body>
+</html>
+
+<script>
+    async function loadAnime() {
+        const query = `
+      query {
+        Page(page: 2000, perPage: 10) {
+          media(type: ANIME, sort: POPULARITY_DESC) {
+            id
+            title { romaji }
+            description(asHtml: false)
+            coverImage { large }
+            siteUrl
+            startDate { year }
+          }
+        }
+      }
+    `;
+
+        const response = await fetch("https://graphql.anilist.co", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ query })
+        });
+
+        const data = await response.json();
+        const animeList = data.data.Page.media;
+        const container = document.querySelector(".grid");
+        container.innerHTML = "";
+
+        animeList.forEach(anime => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+        <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
+        <h3>${anime.title.romaji} (${anime.startDate.year || "N/A"})</h3>
+        <p>${anime.description.slice(0, 120)}...</p>
+        <a href="${anime.siteUrl}" target="_blank">View on AniList</a>
+      `;
+            container.appendChild(card);
+        });
+    }
+
+    loadAnime();
+</script>
+.card:hover {
+transform: scale(1.05);
+transition: 0.3s ease;
+box-shadow: 0 0 15px #ff4081;
+}
+iframe {
+margin-top: 10px;
+border-radius: 8px;
+} 
+
+<script>
+  const YT_API_KEY = "YOUR_API_KEY_HERE";
+
+  async function getTrailer(title) {
+    const res = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(title + " official trailer")}&key=${YT_API_KEY}`
+    );
+    const data = await res.json();
+    if (data.items.length > 0) {
+      return `https://www.youtube.com/embed/${data.items[0].id.videoId}`;
+    }
+    return null;
+  }
+
+  async function loadAnime() {
+    const query = `
+      query {
+        Page(page: 2000, perPage: 10) {
+          media(type: ANIME, sort: POPULARITY_DESC) {
+            title { romaji }
+            description(asHtml: false)
+            coverImage { large }
+            siteUrl
+            startDate { year }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query })
+    });
+
+    const data = await response.json();
+    const animeList = data.data.Page.media;
+    const container = document.querySelector(".grid");
+    container.innerHTML = "";
+
+    for (const anime of animeList) {
+      const trailerUrl = await getTrailer(anime.title.romaji);
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
+        <h3>${anime.title.romaji} (${anime.startDate.year || "N/A"})</h3>
+        <p>${anime.description ? anime.description.slice(0, 120) : "No description"}...</p>
+        ${trailerUrl ? `<iframe width="100%" height="180" src="${trailerUrl}" frameborder="0" allowfullscreen></iframe>` : ""}
+        <a href="${anime.siteUrl}" target="_blank">View on AniList</a>
+      `;
+      container.appendChild(card);
+    }
+  }
+
+  loadAnime();
+</script>
+iframe {
+margin-top: 10px;
+border-radius: 8px;
+box-shadow: 0 0 10px #ff4081;
+}
