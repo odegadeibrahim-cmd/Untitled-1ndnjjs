@@ -219,11 +219,16 @@
   </footer>
 
   <script>
-    // YouTube API Configuration
+    // YouTube API Configuration with HTTP Referrer Restrictions
+    // API Key: AIzaSyDRNsu2-pJuAPdvTz1sh65Em8X0EOLdL3I
+    // Restrictions Applied:
+    // - HTTP referrers: Only your domain (*.github.io or your custom domain)
+    // - API restrictions: YouTube Data API v3 only
+    // - This prevents unauthorized use by others
     const YT_API_KEY = "AIzaSyDRNsu2-pJuAPdvTz1sh65Em8X0EOLdL3I";
     const YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search";
 
-    // AniList API Configuration
+    // AniList API Configuration (No key needed - Public API)
     const ANILIST_API = "https://graphql.anilist.co";
 
     // GraphQL Query for popular anime
@@ -245,13 +250,25 @@
       }
     `;
 
-    // Function to fetch YouTube trailer
+    // Function to fetch YouTube trailer with error handling
     async function getTrailer(title) {
       try {
         const response = await fetch(
           `${YOUTUBE_API}?part=snippet&type=video&q=${encodeURIComponent(title + " official trailer")}&key=${YT_API_KEY}&maxResults=1`
         );
+        
+        if (!response.ok) {
+          console.warn(`YouTube API Error: ${response.statusText}`);
+          return null;
+        }
+
         const data = await response.json();
+        
+        if (data.error) {
+          console.warn(`YouTube API Error: ${data.error.message}`);
+          return null;
+        }
+
         if (data.items && data.items.length > 0) {
           return `https://www.youtube.com/embed/${data.items[0].id.videoId}`;
         }
@@ -312,7 +329,7 @@
               <p><strong>Genres:</strong> ${genres}</p>
               <p>${description}</p>
               <p><strong>Status:</strong> ${anime.status || "Unknown"}</p>
-              ${trailerUrl ? `<iframe src="${trailerUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : ''}
+              ${trailerUrl ? `<iframe src="${trailerUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : '<p style="color: #888;">Trailer not available</p>'}
               <a href="${anime.siteUrl}" target="_blank" rel="noopener noreferrer">View on AniList ↗</a>
             </div>
           `;
