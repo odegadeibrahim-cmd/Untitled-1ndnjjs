@@ -219,6 +219,10 @@
   </footer>
 
   <script>
+    // YouTube API Configuration
+    const YT_API_KEY = "AIzaSyDRNsu2-pJuAPdvTz1sh65Em8X0EOLdL3I";
+    const YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search";
+
     // AniList API Configuration
     const ANILIST_API = "https://graphql.anilist.co";
 
@@ -240,6 +244,22 @@
         }
       }
     `;
+
+    // Function to fetch YouTube trailer
+    async function getTrailer(title) {
+      try {
+        const response = await fetch(
+          `${YOUTUBE_API}?part=snippet&type=video&q=${encodeURIComponent(title + " official trailer")}&key=${YT_API_KEY}&maxResults=1`
+        );
+        const data = await response.json();
+        if (data.items && data.items.length > 0) {
+          return `https://www.youtube.com/embed/${data.items[0].id.videoId}`;
+        }
+      } catch (error) {
+        console.warn(`Could not fetch trailer for ${title}:`, error);
+      }
+      return null;
+    }
 
     // Fetch and display anime
     async function loadAnime() {
@@ -270,7 +290,7 @@
         const animeList = data.data.Page.media;
         container.innerHTML = "";
 
-        animeList.forEach((anime) => {
+        for (const anime of animeList) {
           const card = document.createElement("div");
           card.className = "card";
 
@@ -279,6 +299,9 @@
           const description = anime.description 
             ? anime.description.replace(/<[^>]*>/g, "").slice(0, 120) + "..."
             : "No description available";
+
+          // Fetch trailer
+          const trailerUrl = await getTrailer(anime.title.romaji || anime.title.english);
 
           card.innerHTML = `
             <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
@@ -289,12 +312,13 @@
               <p><strong>Genres:</strong> ${genres}</p>
               <p>${description}</p>
               <p><strong>Status:</strong> ${anime.status || "Unknown"}</p>
+              ${trailerUrl ? `<iframe src="${trailerUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : ''}
               <a href="${anime.siteUrl}" target="_blank" rel="noopener noreferrer">View on AniList ↗</a>
             </div>
           `;
 
           container.appendChild(card);
-        });
+        }
 
       } catch (error) {
         console.error("Error loading anime:", error);
