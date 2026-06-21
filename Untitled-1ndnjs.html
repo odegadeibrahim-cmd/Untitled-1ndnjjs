@@ -11,26 +11,94 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --primary: #ff4081;
+      --accent: #00e5ff;
+      --dark-bg: #0d0d0d;
+      --card-bg: #1f1f1f;
+      --header-bg: #1a1a1a;
+      --text-light: #cccccc;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
-      background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+      background: linear-gradient(135deg, var(--dark-bg) 0%, var(--header-bg) 100%);
       color: #fff;
       line-height: 1.6;
+      transition: background 0.3s ease;
+    }
+
+    body.light-mode {
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      color: #333;
+    }
+
+    body.light-mode header {
+      background: #fff;
+      border-bottom-color: #ff4081;
+    }
+
+    body.light-mode .card {
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    body.light-mode .card p,
+    body.light-mode .card h3 {
+      color: #333;
     }
 
     header {
-      background: #1a1a1a;
+      background: var(--header-bg);
       padding: 20px;
       text-align: center;
-      border-bottom: 3px solid #ff4081;
+      border-bottom: 3px solid var(--primary);
       box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+      transition: background 0.3s ease;
     }
 
     header h1 {
       font-size: 2.5em;
       margin-bottom: 20px;
-      color: #ff4081;
+      color: var(--primary);
       text-shadow: 0 0 10px rgba(255, 64, 129, 0.5);
+      animation: slideDown 0.5s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header-controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .theme-toggle {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--primary);
     }
 
     nav {
@@ -41,7 +109,7 @@
     }
 
     nav a {
-      color: #ff4081;
+      color: var(--primary);
       text-decoration: none;
       font-weight: bold;
       padding: 8px 15px;
@@ -50,31 +118,52 @@
     }
 
     nav a:hover {
-      background: #ff4081;
+      background: var(--primary);
       color: #000;
       transform: scale(1.1);
     }
 
-    .search-container {
-      margin-top: 15px;
+    .controls-section {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      padding: 15px 20px;
+      align-items: center;
     }
 
-    .search-container input {
+    .search-container input,
+    .sort-container select {
       padding: 10px 15px;
-      border: 2px solid #ff4081;
+      border: 2px solid var(--primary);
       border-radius: 5px;
-      background: #0d0d0d;
+      background: var(--dark-bg);
       color: #fff;
       font-size: 14px;
-      width: 100%;
-      max-width: 300px;
       transition: all 0.3s ease;
     }
 
-    .search-container input:focus {
+    body.light-mode .search-container input,
+    body.light-mode .sort-container select {
+      background: #fff;
+      color: #333;
+      border-color: var(--primary);
+    }
+
+    .search-container input:focus,
+    .sort-container select:focus {
       outline: none;
-      box-shadow: 0 0 15px #ff4081;
-      border-color: #00e5ff;
+      box-shadow: 0 0 15px var(--primary);
+      border-color: var(--accent);
+    }
+
+    .sort-container select {
+      cursor: pointer;
+    }
+
+    .sort-container select option {
+      background: var(--card-bg);
+      color: #fff;
     }
 
     .grid {
@@ -82,24 +171,59 @@
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
       padding: 30px 20px;
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
     .card {
-      background: #1f1f1f;
+      background: var(--card-bg);
       border-radius: 10px;
       overflow: hidden;
       text-align: center;
       transition: all 0.3s ease;
       border: 2px solid transparent;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
     }
 
     .card:hover {
       transform: scale(1.05);
-      border-color: #ff4081;
+      border-color: var(--primary);
       box-shadow: 0 0 20px rgba(255, 64, 129, 0.6);
+    }
+
+    .favorite-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .favorite-btn:hover {
+      background: var(--primary);
+      transform: scale(1.2);
+    }
+
+    .favorite-btn.active {
+      color: var(--primary);
     }
 
     .card img {
@@ -115,15 +239,19 @@
 
     .card h3 {
       margin: 10px 0;
-      color: #ff4081;
+      color: var(--primary);
       font-size: 1.3em;
     }
 
     .card p {
       font-size: 14px;
-      color: #cccccc;
+      color: var(--text-light);
       margin: 10px 0;
       min-height: 40px;
+    }
+
+    body.light-mode .card p {
+      color: #666;
     }
 
     iframe {
@@ -139,28 +267,29 @@
       display: inline-block;
       margin-top: 10px;
       padding: 10px 20px;
-      color: #00e5ff;
+      color: var(--accent);
       text-decoration: none;
       background: rgba(0, 229, 255, 0.1);
-      border: 2px solid #00e5ff;
+      border: 2px solid var(--accent);
       border-radius: 5px;
       transition: all 0.3s ease;
       font-weight: bold;
     }
 
     .card a:hover {
-      background: #00e5ff;
+      background: var(--accent);
       color: #000;
       transform: translateY(-2px);
     }
 
     footer {
-      background: #1a1a1a;
+      background: var(--header-bg);
       text-align: center;
       padding: 20px;
       margin-top: 40px;
-      border-top: 3px solid #ff4081;
-      color: #cccccc;
+      border-top: 3px solid var(--primary);
+      color: var(--text-light);
+      transition: background 0.3s ease;
     }
 
     footer p {
@@ -171,7 +300,15 @@
       text-align: center;
       padding: 40px;
       font-size: 18px;
-      color: #ff4081;
+      color: var(--primary);
+      grid-column: 1 / -1;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: var(--primary);
       grid-column: 1 / -1;
     }
 
@@ -190,8 +327,17 @@
         padding: 15px;
       }
 
-      .search-container input {
+      .controls-section {
+        flex-direction: column;
+      }
+
+      .search-container input,
+      .sort-container select {
         width: 100%;
+      }
+
+      .header-controls {
+        flex-direction: column;
       }
     }
   </style>
@@ -199,14 +345,28 @@
 <body>
   <header>
     <h1>🎌 Anime Universe</h1>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#library">Library</a>
-      <a href="#news">News</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search anime...">
+    <div class="header-controls">
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#library">Library</a>
+        <a href="#favorites">Favorites</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </div>
+    <div class="controls-section">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search anime...">
+      </div>
+      <div class="sort-container">
+        <select id="sortBy" onchange="sortAnime()">
+          <option value="popularity">Sort by Popularity</option>
+          <option value="year-new">Sort by Year (Newest)</option>
+          <option value="year-old">Sort by Year (Oldest)</option>
+          <option value="episodes">Sort by Episodes</option>
+          <option value="rating">Sort by Rating</option>
+        </select>
+      </div>
     </div>
   </header>
 
@@ -220,21 +380,17 @@
 
   <script>
     // YouTube API Configuration with HTTP Referrer Restrictions
-    // API Key: AIzaSyDRNsu2-pJuAPdvTz1sh65Em8X0EOLdL3I
-    // Restrictions Applied:
-    // - HTTP referrers: Only your domain (*.github.io or your custom domain)
-    // - API restrictions: YouTube Data API v3 only
-    // - This prevents unauthorized use by others
     const YT_API_KEY = "AIzaSyDRNsu2-pJuAPdvTz1sh65Em8X0EOLdL3I";
     const YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search";
-
-    // AniList API Configuration (No key needed - Public API)
     const ANILIST_API = "https://graphql.anilist.co";
 
-    // GraphQL Query for popular anime
+    let allAnimeData = [];
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    // GraphQL Query for more anime (24 instead of 12)
     const ANIME_QUERY = `
       query {
-        Page(page: 1, perPage: 12) {
+        Page(page: 1, perPage: 24) {
           media(type: ANIME, sort: POPULARITY_DESC) {
             id
             title { romaji english }
@@ -245,30 +401,55 @@
             status
             episodes
             genres
+            averageScore
           }
         }
       }
     `;
 
-    // Function to fetch YouTube trailer with error handling
+    // Theme Toggle
+    function toggleTheme() {
+      document.body.classList.toggle("light-mode");
+      const btn = document.querySelector(".theme-toggle");
+      const isLight = document.body.classList.contains("light-mode");
+      btn.textContent = isLight ? "☀️ Light Mode" : "🌙 Dark Mode";
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+    }
+
+    // Load theme preference
+    function loadTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        document.body.classList.add("light-mode");
+        document.querySelector(".theme-toggle").textContent = "☀️ Light Mode";
+      }
+    }
+
+    // Add/Remove Favorites
+    function toggleFavorite(animeId) {
+      const btn = document.querySelector(`[data-favorite="${animeId}"]`);
+      if (favorites.includes(animeId)) {
+        favorites = favorites.filter(id => id !== animeId);
+        btn.textContent = "🤍";
+        btn.classList.remove("active");
+      } else {
+        favorites.push(animeId);
+        btn.textContent = "❤️";
+        btn.classList.add("active");
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    }
+
+    // Fetch YouTube trailer
     async function getTrailer(title) {
       try {
         const response = await fetch(
           `${YOUTUBE_API}?part=snippet&type=video&q=${encodeURIComponent(title + " official trailer")}&key=${YT_API_KEY}&maxResults=1`
         );
         
-        if (!response.ok) {
-          console.warn(`YouTube API Error: ${response.statusText}`);
-          return null;
-        }
-
+        if (!response.ok) return null;
         const data = await response.json();
         
-        if (data.error) {
-          console.warn(`YouTube API Error: ${data.error.message}`);
-          return null;
-        }
-
         if (data.items && data.items.length > 0) {
           return `https://www.youtube.com/embed/${data.items[0].id.videoId}`;
         }
@@ -278,11 +459,10 @@
       return null;
     }
 
-    // Fetch and display anime
+    // Load Anime
     async function loadAnime() {
       try {
         const container = document.getElementById("animeGrid");
-
         const response = await fetch(ANILIST_API, {
           method: "POST",
           headers: {
@@ -292,51 +472,16 @@
           body: JSON.stringify({ query: ANIME_QUERY })
         });
 
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.statusText}`);
-        }
-
+        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
         const data = await response.json();
 
         if (data.errors) {
           container.innerHTML = `<div class="loading">Error loading anime. Please try again later.</div>`;
-          console.error("API Error:", data.errors);
           return;
         }
 
-        const animeList = data.data.Page.media;
-        container.innerHTML = "";
-
-        for (const anime of animeList) {
-          const card = document.createElement("div");
-          card.className = "card";
-
-          const genres = anime.genres ? anime.genres.join(", ") : "N/A";
-          const episodes = anime.episodes || "?";
-          const description = anime.description 
-            ? anime.description.replace(/<[^>]*>/g, "").slice(0, 120) + "..."
-            : "No description available";
-
-          // Fetch trailer
-          const trailerUrl = await getTrailer(anime.title.romaji || anime.title.english);
-
-          card.innerHTML = `
-            <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
-            <div class="card-content">
-              <h3>${anime.title.romaji || anime.title.english}</h3>
-              <p><strong>Year:</strong> ${anime.startDate.year || "N/A"}</p>
-              <p><strong>Episodes:</strong> ${episodes}</p>
-              <p><strong>Genres:</strong> ${genres}</p>
-              <p>${description}</p>
-              <p><strong>Status:</strong> ${anime.status || "Unknown"}</p>
-              ${trailerUrl ? `<iframe src="${trailerUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : '<p style="color: #888;">Trailer not available</p>'}
-              <a href="${anime.siteUrl}" target="_blank" rel="noopener noreferrer">View on AniList ↗</a>
-            </div>
-          `;
-
-          container.appendChild(card);
-        }
-
+        allAnimeData = data.data.Page.media;
+        await displayAnime(allAnimeData);
       } catch (error) {
         console.error("Error loading anime:", error);
         const container = document.getElementById("animeGrid");
@@ -344,24 +489,92 @@
       }
     }
 
-    // Search functionality
+    // Display Anime
+    async function displayAnime(animeList) {
+      const container = document.getElementById("animeGrid");
+      
+      if (animeList.length === 0) {
+        container.innerHTML = `<div class="no-results">No anime found. Try a different search!</div>`;
+        return;
+      }
+
+      container.innerHTML = "";
+
+      for (const anime of animeList) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.animation = "fadeIn 0.5s ease";
+
+        const genres = anime.genres ? anime.genres.join(", ") : "N/A";
+        const episodes = anime.episodes || "?";
+        const description = anime.description 
+          ? anime.description.replace(/<[^>]*>/g, "").slice(0, 120) + "..."
+          : "No description available";
+        const rating = anime.averageScore ? `${anime.averageScore}/100` : "N/A";
+        const isFavorite = favorites.includes(anime.id);
+
+        const trailerUrl = await getTrailer(anime.title.romaji || anime.title.english);
+
+        card.innerHTML = `
+          <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-favorite="${anime.id}" onclick="toggleFavorite(${anime.id})">
+            ${isFavorite ? '❤️' : '🤍'}
+          </button>
+          <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
+          <div class="card-content">
+            <h3>${anime.title.romaji || anime.title.english}</h3>
+            <p><strong>Year:</strong> ${anime.startDate.year || "N/A"}</p>
+            <p><strong>Episodes:</strong> ${episodes}</p>
+            <p><strong>Rating:</strong> ${rating}</p>
+            <p><strong>Genres:</strong> ${genres}</p>
+            <p>${description}</p>
+            <p><strong>Status:</strong> ${anime.status || "Unknown"}</p>
+            ${trailerUrl ? `<iframe src="${trailerUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` : '<p style="color: #888;">Trailer not available</p>'}
+            <a href="${anime.siteUrl}" target="_blank" rel="noopener noreferrer">View on AniList ↗</a>
+          </div>
+        `;
+
+        container.appendChild(card);
+      }
+    }
+
+    // Search Functionality
     document.getElementById("searchInput").addEventListener("input", function(e) {
       const searchTerm = e.target.value.toLowerCase();
-      const cards = document.querySelectorAll(".card");
-
-      cards.forEach(card => {
-        const title = card.querySelector("h3").textContent.toLowerCase();
-        const genres = card.textContent.toLowerCase();
-
-        if (title.includes(searchTerm) || genres.includes(searchTerm)) {
-          card.style.display = "block";
-        } else {
-          card.style.display = "none";
-        }
+      const filtered = allAnimeData.filter(anime => {
+        const title = (anime.title.romaji || anime.title.english).toLowerCase();
+        const genres = (anime.genres || []).join(" ").toLowerCase();
+        return title.includes(searchTerm) || genres.includes(searchTerm);
       });
+      displayAnime(filtered);
     });
 
-    // Load anime on page load
+    // Sort Anime
+    async function sortAnime() {
+      const sortBy = document.getElementById("sortBy").value;
+      let sorted = [...allAnimeData];
+
+      switch(sortBy) {
+        case "year-new":
+          sorted.sort((a, b) => (b.startDate.year || 0) - (a.startDate.year || 0));
+          break;
+        case "year-old":
+          sorted.sort((a, b) => (a.startDate.year || 0) - (b.startDate.year || 0));
+          break;
+        case "episodes":
+          sorted.sort((a, b) => (b.episodes || 0) - (a.episodes || 0));
+          break;
+        case "rating":
+          sorted.sort((a, b) => (b.averageScore || 0) - (a.averageScore || 0));
+          break;
+        default:
+          // Keep original popularity order
+      }
+
+      await displayAnime(sorted);
+    }
+
+    // Initialize
+    loadTheme();
     window.addEventListener("load", loadAnime);
   </script>
 </body>
